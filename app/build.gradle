@@ -1,0 +1,51 @@
+apply plugin: 'com.android.application'
+
+// Manages the API key required by TheMovieDB
+// ADD the MOVIE_DB_API_KEY variable to your gradle properties file ($HOME/gradle.properties)
+// Source: https://discussions.udacity.com/t/themoviedb-org-api-key-where-should-i-store-it/25468/8
+if (!project.hasProperty('MOVIE_DB_API_KEY')) {
+    //Stop the build
+    throw new GradleException("Make sure to set MovieInfo DB API Key in gradle properties as: MOVIE_DB_API_KEY")
+}
+def API_KEY = '"' + project.properties['MOVIE_DB_API_KEY'] + '"'
+
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.1"
+    defaultConfig {
+        applicationId "com.udacity.android.jsrois.popularmovies"
+        minSdkVersion 15
+        targetSdkVersion 25
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        all {
+            buildConfigField 'String', 'API_KEY', API_KEY
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    repositories {
+
+        mavenCentral()
+
+    }
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.android.support:appcompat-v7:25.0.1'
+    compile 'com.android.support:recyclerview-v7:25.0.1'
+    testCompile 'junit:junit:4.12'
+}
+
