@@ -92,7 +92,7 @@ class MovieDatabase {
         Uri builtUri = Uri.parse(MOVIEDB_IMAGE_BASE_URL).buildUpon()
                 .appendPath("w185")
                 // sanitize (removing the starting "/" )
-                .appendPath(posterPath.replace("/",""))
+                .appendPath(posterPath.replace("/", ""))
                 .appendQueryParameter(API_KEY_PARAM, BuildConfig.API_KEY)
                 .build();
 

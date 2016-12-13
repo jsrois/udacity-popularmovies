@@ -11,8 +11,20 @@ import android.widget.ImageView;
 /**
  * Created by jsrois on 12/12/16.
  */
-public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapterViewHolder> {
+public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieAdapterViewHolder> {
     private MovieInfo[] moviesInfo;
+
+
+    MoviesAdapterOnClickHandler onClickHandler;
+
+    public interface MoviesAdapterOnClickHandler {
+        void onClick(MovieInfo movieInfo);
+    }
+
+
+    public MoviesAdapter(MoviesAdapterOnClickHandler onClickHandler) {
+        this.onClickHandler = onClickHandler;
+    }
 
     @Override
     public MovieAdapterViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
@@ -29,7 +41,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
     public void onBindViewHolder(MovieAdapterViewHolder holder, int position) {
         Log.i("", "onBindViewHolder: ");
         MovieInfo movieInfo = moviesInfo[position];
-        movieInfo.printTo(holder);
+        movieInfo.printPosterTo(holder);
     }
 
     @Override
@@ -45,12 +57,21 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieAdapter
         notifyDataSetChanged();
     }
 
-    public class MovieAdapterViewHolder extends RecyclerView.ViewHolder{
+    public class MovieAdapterViewHolder
+            extends RecyclerView.ViewHolder
+            implements View.OnClickListener {
         public ImageView posterView;
         public MovieAdapterViewHolder(View view) {
             super(view);
             posterView = (ImageView) view.findViewById(R.id.iv_movie_poster);
-            // TODO setOnClickListener
+            view.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            int adapterPosition = getAdapterPosition();
+            MovieInfo movieInfo = moviesInfo[adapterPosition];
+            onClickHandler.onClick(movieInfo);
         }
     }
 

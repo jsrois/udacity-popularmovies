@@ -1,6 +1,7 @@
 package com.udacity.android.jsrois.popularmovies;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -16,10 +17,11 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements MoviesAdapter.MoviesAdapterOnClickHandler{
 
     RecyclerView recyclerView;
-    MovieAdapter movieAdapter;
+    MoviesAdapter moviesAdapter;
     ProgressBar progressBar;
     Toast toast;
 
@@ -32,8 +34,8 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = (RecyclerView) findViewById(R.id.rv_activity_main);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(gridLayoutManager);
-        movieAdapter = new MovieAdapter();
-        recyclerView.setAdapter(movieAdapter);
+        moviesAdapter = new MoviesAdapter(this);
+        recyclerView.setAdapter(moviesAdapter);
 
         if (!online()) {
             if (toast != null) {
@@ -55,6 +57,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void getMovieData(String filter) {
         new QueryMovieDataTask().execute(filter);
+    }
+
+    @Override
+    public void onClick(MovieInfo movieInfo) {
+        Context context = this;
+        Class destination = MovieDetails.class;
+        Intent intent = new Intent(context,destination);
+        intent.putExtra("MovieInfo",movieInfo);
+        startActivity(intent);
     }
 
 
@@ -79,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(MovieInfo[] movieInfos) {
             progressBar.setVisibility(View.INVISIBLE);
             Log.i("MOVIE_INFO","onPostExecute: "+movieInfos.length);
-            movieAdapter.setMoviesInfo(movieInfos);
+            moviesAdapter.setMoviesInfo(movieInfos);
             super.onPostExecute(movieInfos);
         }
 
