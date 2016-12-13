@@ -23,11 +23,11 @@ class MovieDatabase {
     private static final String API_KEY_PARAM = "api_key";
     private static final String MOVIEDB_IMAGE_BASE_URL = "http://image.tmdb.org/t/p/";
 
-    public MovieInfo[] getPopularMovies() {
-        URL popularMoviesUrl = buildQueryUrl("popular");
+    MovieInfo[] getMovies(String filter) {
+        URL popularMoviesUrl = buildQueryUrl(filter);
         try {
             String jsonResponse = getResponseFromHttpUrl(popularMoviesUrl);
-            Log.i("", "getPopularMovies: " + jsonResponse);
+            Log.i("", "getMovies: " + jsonResponse);
             return getMovieInfoArrayFromJson(jsonResponse);
         } catch (Exception e) {
             e.printStackTrace();
@@ -87,7 +87,7 @@ class MovieDatabase {
         return null;
     }
 
-    public static URL getPosterUrl(String posterPath) {
+    static URL getPosterUrl(String posterPath) {
 
         Uri builtUri = Uri.parse(MOVIEDB_IMAGE_BASE_URL).buildUpon()
                 .appendPath("w185")

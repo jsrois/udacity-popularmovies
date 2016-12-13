@@ -9,6 +9,9 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -37,9 +40,10 @@ public class MainActivity extends AppCompatActivity {
                 toast.cancel();
             }
             toast = Toast.makeText(this,"Unable to connect to server",Toast.LENGTH_SHORT);
+            toast.show();
             return;
         }
-        getMovieData();
+        getMovieData("popular");
     }
 
     private boolean online() {
@@ -49,12 +53,12 @@ public class MainActivity extends AppCompatActivity {
         return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
-    private void getMovieData() {
-        new QueryMovieDataTask().execute();
+    private void getMovieData(String filter) {
+        new QueryMovieDataTask().execute(filter);
     }
 
 
-    class QueryMovieDataTask extends AsyncTask<Void,Void,MovieInfo[]> {
+    class QueryMovieDataTask extends AsyncTask<String,Void,MovieInfo[]> {
 
         MovieDatabase movieDatabase;
 
@@ -66,8 +70,9 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected MovieInfo[] doInBackground(Void... voids) {
-            return movieDatabase.getPopularMovies();
+        protected MovieInfo[] doInBackground(String... strings) {
+            String filter = strings[0];
+            return movieDatabase.getMovies(filter);
         }
 
         @Override
@@ -81,4 +86,26 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = new MenuInflater(this);
+        inflater.inflate(R.menu.main_activity_preferences,menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int itemId = item.getItemId();
+        if (itemId == R.id.action_popular) {
+            getMovieData("popular");
+            return true;
+        }
+
+        if (itemId == R.id.action_top_rated) {
+            getMovieData("top_rated");
+            return true;
+        }
+
+        return false;
+    }
 }
